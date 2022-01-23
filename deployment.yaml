@@ -1,0 +1,84 @@
+# Deployment do MongoDB
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb 
+  template:
+    metadata:
+      labels:
+        app: mongodb 
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:5.0.5
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: mongouser
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: mongopwd
+
+---
+# Service MondoDB
+apiVersion: v1
+kind: Service 
+metadata: 
+  name: mongodb
+spec:
+  selector:
+    app: mongodb 
+  ports:
+  - port: 27017
+  type: ClusterIP
+
+---
+# Deployment API
+apiVersion: apps/v1
+kind: Deployment 
+metadata: 
+  name: web-rotten-potetoes
+spec: 
+  replicas: 5
+  selector:
+    matchLabels:
+      app: web-rotten-potetoes
+  template:
+    metadata:
+      labels:
+        app: web-rotten-potetoes
+    spec:
+      containers:
+        - name: web-rotten-potetoes
+          image: mazzeomoura/rotten-potatoes:v2
+          ports:
+          - containerPort: 5000
+          env:
+          - name: MONGODB_DB
+            value: admin
+          - name: MONGODB_HOST
+            value: mongodb
+          - name: MONGODB_PORT
+            value: "27017"
+          - name: MONGODB_USERNAME
+            value: mongouser
+          - name: MONGODB_PASSWORD
+            value: mongopwd
+---
+#Service Web
+apiVersion: v1 
+kind: Service 
+metadata:
+  name: web-rotten-potetoes
+spec:
+  selector:
+    app: web-rotten-potetoes
+  ports:
+  - port: 80 
+    targetPort: 5000
+    nodePort: 30000
+  type: LoadBalancer
