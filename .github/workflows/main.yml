@@ -40,8 +40,8 @@ jobs:
             mazzeomoura/rotten-potetoes:${{ github.run_number }}
             
   CD:
-    runs-on: ubuntu-latest
-    
+    needs: [CI]
+    runs-on: ubuntu-latest  
     steps:
         - uses: actions/checkout@v2
         - name: Kubernetes Set Context
