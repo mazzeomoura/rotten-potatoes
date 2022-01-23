@@ -49,6 +49,14 @@ jobs:
           with:
               method: kubeconfig
               kubeconfig: ${{ secrets.KUBECONFIG }}
+          
+        - name: Deploy to Kubernetes cluster
+          uses: Azure/k8s-deploy@v1.5
+          with:
+              images: mazzeomoura/rotten-potetoes:${{ github.run_number }}
+              manifests: |
+                    deployment.yaml
+
               
               
               
