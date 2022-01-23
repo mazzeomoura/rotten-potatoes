@@ -1,6 +1,6 @@
 FROM node
 WORKDIR /opt
-COPY package*.json ./
+COPY package*.json /opt
 RUN npm install
 COPY . .
 EXPOSE 8080
